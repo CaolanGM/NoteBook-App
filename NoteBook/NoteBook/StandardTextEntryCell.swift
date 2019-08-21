@@ -12,6 +12,25 @@ class StandardTextEntryCell: UITableViewCell {
 
     @IBOutlet weak var textEntry: UITextField!
     
+    var add: ((_ testStr:String) -> ())?
+    
+    @IBAction func addLine(_ sender: Any) {
+        
+        print("Text add clicked")
+
+        
+        let text = textEntry.text
+        if(!text!.isEqual(""))
+        {
+            print("Text",text)
+            add?(text!)
+            textEntry.text = ""
+        }
+        else
+        {
+            print("No text")
+        }
+    }
     override func awakeFromNib() {
         super.awakeFromNib()
         // Initialization code
@@ -26,4 +45,10 @@ class StandardTextEntryCell: UITableViewCell {
     func setCell(){
         textEntry.borderStyle = UITextField.BorderStyle.none
     }
+    
+    
+    
+    
 }
+
+

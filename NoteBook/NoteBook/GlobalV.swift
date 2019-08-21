@@ -7,11 +7,13 @@
 //
 
 import Foundation
+import FirebaseDatabase
 
 struct GlobalV{
     
     
     static var tableType = ""
     static var tableContent = ""
-    static var dbRef = ""
+    static var dbRef:DatabaseReference? = nil
+    
 }

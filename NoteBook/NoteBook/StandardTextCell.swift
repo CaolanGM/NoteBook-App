@@ -10,6 +10,8 @@ import UIKit
 
 class StandardTextCell: UITableViewCell {
 
+    @IBOutlet weak var cellText: UILabel!
+    
     override func awakeFromNib() {
         super.awakeFromNib()
         // Initialization code
@@ -21,4 +23,9 @@ class StandardTextCell: UITableViewCell {
         // Configure the view for the selected state
     }
 
+    
+    func setCell(_ cellTextP:String){
+        cellText.text = cellTextP
+        cellText.numberOfLines = 10
+    }
 }

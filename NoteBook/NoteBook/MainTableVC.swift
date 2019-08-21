@@ -7,34 +7,62 @@
 //
 
 import UIKit
+import FirebaseDatabase
+
 
 class MainTableVC: UIViewController,UITableViewDataSource, UITableViewDelegate {
     
+    @IBAction func btnClicked(_ sender: Any) {
+        
+        print("Clicked")
+    }
+    
+    var sectionsArray:[String] = []
+    
+    var ref:DatabaseReference?
     
     @IBOutlet weak var tableView: UITableView!
     
     
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 5
+        return sectionsArray.count + 1
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
-        if(indexPath.row < 4)
+        if(indexPath.row < sectionsArray.count)
         {
             let cell = tableView.dequeueReusableCell(withIdentifier: "StandardTextCell",for: indexPath) as! StandardTextCell
             cell.selectionStyle = UITableViewCell.SelectionStyle.none
+            cell.setCell(sectionsArray[indexPath.row])
             return cell
         }
         else{
             let cell = tableView.dequeueReusableCell(withIdentifier: "StandardTextEntryCell") as! StandardTextEntryCell
             cell.selectionStyle = UITableViewCell.SelectionStyle.none
             cell.setCell()
+            cell.add = self.add
             return cell
         }
     }
     
+    
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        
+        if(indexPath.row < sectionsArray.count)
+        {
+            let section = sectionsArray[indexPath.row]
+            GlobalV.dbRef = ref?.child(section)
+            let sb = UIStoryboard(name: "Main", bundle: nil)
+            guard let txtTable = sb.instantiateViewController(withIdentifier: "TextTableVC") as? TextTableVC else{
+                print("Cant find View Controller")
+                return
+            }
+            self.navigationController?.pushViewController(txtTable, animated: true)
+        }
+    }
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -43,6 +71,29 @@ class MainTableVC: UIViewController,UITableViewDataSource, UITableViewDelegate {
         self.tableView.delegate = self
         self.tableView.dataSource = self
         
+        
+        ref = Database.database().reference().child("Home Screen")
+        ref!.observeSingleEvent(of: .value) { snapshot in
+            
+            for case let section as DataSnapshot in snapshot.children {
+                
+                let sectionName = section.key
+                self.sectionsArray.append(sectionName)
+            }
+            self.tableView.reloadData()
+        }
+    }
+    
+    
+    
+    func add(_ test:String) -> () {
+        
+        print("Text table",test)
+
+        
+       ref?.child(test).setValue("empty")
+        sectionsArray.append(test)
+        tableView.reloadData()
     }
     
 
